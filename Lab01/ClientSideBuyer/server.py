@@ -1,25 +1,6 @@
 import socket
-from util import string_util, Util
-
-
-# Get list of all items in the database
-def get(data):
-    return []
-
-
-# Add a new item to the database
-def post(data):
-    return 'Hello'
-
-
-# Update the item list
-def put_or_update(data):
-    return None
-
-
-# Delete an item from the item list
-def delete(data):
-    return None
+from util import Util, string_util
+import services
 
 
 def start_server(port, host):
@@ -40,27 +21,27 @@ def start_server(port, host):
                     response_message = Util.dict_to_json(string_util.error)
                     conn.sendall(Util.dict_to_bytes(response_message))
                 else:  # if header is present
-                    if payload('Header') == 'GET':
-                        items_list = get(data=payload)
+                    if payload['Header'] == 'GET':
+                        items_list = services.get()
                         conn.sendall(Util.dict_to_bytes({'items': items_list}))
-                    elif payload('Header') == 'POST':
-                        response = post(data=payload)
+                    elif payload['Header'] == 'POST':
+                        response = services.post(data=payload)
                         if response is not None:
                             string_util.error['error_message'] = response
                             response_message = Util.dict_to_json(string_util.error)
                             conn.sendall(Util.dict_to_bytes(response_message))
                         else:
                             conn.sendall(Util.dict_to_bytes(string_util.ok))
-                    elif payload('Header') == 'PUT' or payload('Header') == 'UPDATE':
-                        response = put_or_update(data=payload)
+                    elif payload['Header'] == 'PUT' or payload['Header'] == 'UPDATE':
+                        response = services.put_or_update(data=payload)
                         if response is not None:
                             string_util.error['error_message'] = response
                             response_message = Util.dict_to_json(string_util.error)
                             conn.sendall(Util.dict_to_bytes(response_message))
                         else:
                             conn.sendall(Util.dict_to_bytes(string_util.ok))
-                    elif payload('Header') == 'DELETE':
-                        response = delete(data=payload)
+                    elif payload['Header'] == 'DELETE':
+                        response = services.delete()
                         if response is not None:
                             string_util.error['error_message'] = response
                             response_message = Util.dict_to_json(string_util.error)
@@ -77,4 +58,5 @@ def start_server(port, host):
 if __name__ == '__main__':
     host = '127.0.0.1'
     port = 65345
+
     start_server(port, host)  # starting server
