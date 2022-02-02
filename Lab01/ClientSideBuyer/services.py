@@ -5,7 +5,6 @@ from util import string_util
 # Search in the items database
 def search(data):
     response = db_util.read_db(db_name=db_util.item_db)
-    data = []
     return response
 
 
@@ -17,7 +16,7 @@ def get():
 
 # Add a new item to the cart database
 def post(data):
-    body = data['body']
+    body = data['Body']
     if 'items' not in body:
         return string_util.missing_request_parameters.format(request_parameters='items')
     items = body['items']
@@ -28,7 +27,6 @@ def post(data):
         entries.update(
             {item['item_id']: item['quantity']}
         )
-    print(entries)
     error = db_util.write_db(db_name=db_util.cart_db, entries=entries)
     if error:
         return string_util.error_add_item_cart
@@ -37,10 +35,10 @@ def post(data):
 
 # Update the cart
 def put_or_update(data):
-    body = data['body']
+    body = data['Body']
     if not ('item_id' or 'quantity' in body):
         return string_util.missing_request_parameters.format(request_parameters='item_id or quantity')
-    error = db_util.write_db(db_name=db_util.cart_db, entries=body)
+    error = db_util.write_db(db_name=db_util.cart_db, entries={body['item_id']: body['quantity']})
     if error:
         return string_util.error_add_item_cart
     return None
