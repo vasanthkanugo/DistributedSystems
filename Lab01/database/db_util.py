@@ -1,8 +1,10 @@
 import pickle
+import os
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-
-cart_db = '/Users/gkanugo/Desktop/UCB/DS/DistributedSystems/Lab01/database/cart.db'
-item_db = '/Users/gkanugo/Desktop/UCB/DS/DistributedSystems/Lab01/database/item.db'
+cart_db = os.path.join(__location__, 'cart.db')
+item_db = os.path.join(__location__, 'item.db')
 
 def read_db(db_name):
     try:
