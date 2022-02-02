@@ -5,7 +5,7 @@ PORT = 65345        # The port used by the server
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
-    s.sendall(b'{\"Header\":\"GET\", \"body\":{\"item_id\":123,\"quantity\":5}}')
+    s.sendall(b'{\"Header\":\"GET\", \"body\":{\"items\":[{\"item_id\":123,\"quantity\":5},{\"item_id\":234,\"quantity\":5}]}}')
     data = s.recv(1024)
 
 print('Received', repr(data))
