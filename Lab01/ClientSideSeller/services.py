@@ -30,6 +30,8 @@ def put_or_update(data):
         return string_util.item_missing.format(item_id=body['item_id'])
     item = updated_list[body['item_id']]
     item['quantity'] = body['quantity']
+    if item['quantity'] == 0:
+        item = None
     response_message = db_util.write_db(db_name=db_util.item_db, entries={body['item_id']: item})
     print(response_message)
     print("put/update db")
@@ -37,7 +39,5 @@ def put_or_update(data):
 
 
 # Delete an item from the item list
-def delete():
-    response_message = db_util.write_db(db_name=db_util.item_db, entries=dict())
-    print("delete db")
-    return None
+def delete(data):
+    return put_or_update(data)

@@ -1,24 +1,34 @@
 post_request = {
     'Header': 'POST',
     'Body': [
-             {
-                'item_name': 'Books',
-                'item_id': '6675578',
-                'quantity': '23',
-                'item_category': 'Educational'
-             },
-                {
-                    'item_name': 'Laptops',
-                    'item_id': '5578',
-                    'quantity': '50',
-                    'item_category': 'Electronics'
-                },
-                {
-                    'item_name': 'Apples',
-                    'item_id': '68',
-                    'quantity': '80',
-                    'item_category': 'Food'
-                }
+        {
+            'item_name': 'Books',
+            'item_id': '6675578',
+            'quantity': '23',
+            'item_category': 'Educational',
+            'keywords': ['Education', 'Read', 'Study', 'Learn'],
+            'condition': 'new',
+            'sale_price': 1000
+
+        },
+        {
+            'item_name': 'Laptops',
+            'item_id': '5578',
+            'quantity': '50',
+            'item_category': 'Electronics',
+            'keywords': ['Electronic', 'Apple', 'Dell', 'Android'],
+            'condition': 'used',
+            'sale_price': 100000
+        },
+        {
+            'item_name': 'Apples',
+            'item_id': '68',
+            'quantity': '80',
+            'item_category': 'Food',
+            'keywords': ['Fruit', 'Red', 'Juice', 'Pie'],
+            'condition': 'new',
+            'sale_price': 10
+        }
     ]
 }
 
@@ -36,8 +46,11 @@ put_request = {
 }
 
 delete_request = {
-    'Header': 'DELETE'
+    'Header': 'DELETE',
+    'Body': {
+        'item_id': '5578',
+        'quantity': 0
+    }
 }
 
-
-operations = [post_request, get_request, put_request, get_request,  delete_request, get_request]
+operations = [post_request, get_request, put_request, get_request, delete_request, get_request]

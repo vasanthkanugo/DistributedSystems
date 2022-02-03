@@ -3,9 +3,18 @@ from util import string_util
 
 
 # Search in the items database
-def search(keyword):
+def search(data):
     response = db_util.read_db(db_name=db_util.item_db)
-    list_items = [item for item in response.values() if keyword in item['item_category']]
+    if 'item_category' not in data['Body'] or 'keywords' not in data['Body']:
+        return string_util.missing_request_parameters.format(request_parameters='item_category or keywords')
+    category_items = [item for item in response.values() if ('item_category' in item and data['Body']['item_category'] in item['item_category'])]
+    keyword_items = list()
+    for item in response.values():
+        if 'keywords' in item:
+            for keyword in data['Body']['keywords']:
+                if keyword in item['keywords']:
+                    keyword_items.append(item)
+    list_items = [value for value in category_items if value in keyword_items]
     return list_items
 
 

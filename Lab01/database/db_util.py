@@ -20,13 +20,19 @@ def read_db(db_name):
 
 
 def write_db(db_name, entries):
-    db_entries = read_db(db_name=db_name)
+    db_entries = dict(read_db(db_name=db_name))
     if db_entries is None:
         db_entries = dict()
     if len(entries) != 0:
         db_entries.update(entries)
     else:
         db_entries = dict()
+    del_key = None
+    for key, value in db_entries.items():
+        if value is None:
+            del_key = key
+    if not del_key is None:
+        del db_entries[del_key]
     try:
         db_file = open(db_name, 'wb')
         pickle.dump(db_entries, db_file)

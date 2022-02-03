@@ -41,7 +41,10 @@ delete_request = {
 
 search_request = {
     'Header': 'GET',
-    'Body': 'item'
+    'Body': {
+        'item_category': 'Food',
+        'keywords': ['Fruit', 'Fruits', 'Electronics', 'Education']
+    }
 }
 
 

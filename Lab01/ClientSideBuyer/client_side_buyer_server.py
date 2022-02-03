@@ -11,7 +11,7 @@ def handle_connection(payload, connection):
     else:  # if header is present
         if payload['Header'] == 'GET':
             if 'Body' in payload and payload['Body'] is not None:
-                items_list = services.search(keyword=payload['Body'])
+                items_list = services.search(data=payload)
             else:
                 items_list = services.get()
             connection.sendall(Util.dict_to_bytes({'items': items_list}))
