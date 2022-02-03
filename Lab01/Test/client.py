@@ -7,11 +7,8 @@ from util import Util
 
 
 HOST = '127.0.0.1'  # The server's hostname or IP address
-<<<<<<< HEAD
-PORT = 65346      # The port used by the server
-=======
 PORT = 65346        # The port used by the server
->>>>>>> 01a99b3de4e1c8b990d4d1517b3d2f767fe3a57c
+
 
 for operation in client_side_buyer.operations:
     start_time = time.time()
