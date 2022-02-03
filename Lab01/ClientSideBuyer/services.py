@@ -3,9 +3,10 @@ from util import string_util
 
 
 # Search in the items database
-def search(data):
+def search(keyword):
     response = db_util.read_db(db_name=db_util.item_db)
-    return response
+    list_items = [item for item in response.values() if keyword in item['item_category']]
+    return list_items
 
 
 # Get all the elements in the cart

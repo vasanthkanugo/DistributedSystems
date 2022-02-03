@@ -6,7 +6,7 @@ from util import Util
 
 
 HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 65345        # The port used by the server
+PORT = 65346        # The port used by the server
 
 for operation in client_side_buyer.operations:
     start_time = time.time()

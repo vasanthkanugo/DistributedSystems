@@ -41,7 +41,7 @@ delete_request = {
 
 search_request = {
     'Header': 'GET',
-    'Body': 'Search'
+    'Body': 'item'
 }
 
 
