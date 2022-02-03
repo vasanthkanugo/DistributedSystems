@@ -10,7 +10,10 @@ def handle_connection(payload, connection):
         connection.sendall(Util.dict_to_bytes(response_message))
     else:  # if header is present
         if payload['Header'] == 'GET':
-            items_list = services.get()
+            if 'Body' in payload and payload['Body'] is not None:
+                items_list = services.search(keyword=payload['Body'])
+            else:
+                items_list = services.get()
             connection.sendall(Util.dict_to_bytes({'items': items_list}))
         elif payload['Header'] == 'POST':
             response = services.post(data=payload)
