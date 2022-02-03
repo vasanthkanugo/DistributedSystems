@@ -45,5 +45,5 @@ def handle_connection(payload, connection):
 
 if __name__ == '__main__':
     host = '127.0.0.1'
-    port = 65345
+    port = 65346
     run_server.start_server(host, port, handle_connection)  # starting server

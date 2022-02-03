@@ -17,6 +17,7 @@ def threaded_client(connection, function_call):
 def start_server(host, port, function):
     ThreadCount = 0
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((host, port))
         s.listen()
         while True:
