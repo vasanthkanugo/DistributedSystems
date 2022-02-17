@@ -1,52 +1,67 @@
 from util import Util, string_util
 import services
-from server import run_server
+from flask import Flask, request
+
+host, port, app = '127.0.0.1', 655346, Flask(__name__)
 
 
-def handle_connection(payload, connection):
-    if payload is None or 'Header' not in payload:  # if header is missing
-        string_util.error['error_message'] = string_util.missing_header_error
-        response_message = Util.dict_to_json(string_util.error)
-        connection.sendall(Util.dict_to_bytes(response_message))
-    else:  # if header is present
-        if payload['Header'] == 'GET':
-            if 'Body' in payload and payload['Body'] is not None:
-                items_list = services.search(data=payload)
-            else:
-                items_list = services.get()
-            connection.sendall(Util.dict_to_bytes({'items': items_list}))
-        elif payload['Header'] == 'POST':
-            response = services.post(data=payload)
-            if response is not None:
-                string_util.error['error_message'] = response
-                response_message = Util.dict_to_json(string_util.error)
-                connection.sendall(Util.dict_to_bytes(response_message))
-            else:
-                connection.sendall(Util.dict_to_bytes(string_util.ok))
-        elif payload['Header'] == 'PUT' or payload['Header'] == 'UPDATE':
-            response = services.put_or_update(data=payload)
-            if response is not None:
-                string_util.error['error_message'] = response
-                response_message = Util.dict_to_json(string_util.error)
-                connection.sendall(Util.dict_to_bytes(response_message))
-            else:
-                connection.sendall(Util.dict_to_bytes(string_util.ok))
-        elif payload['Header'] == 'DELETE':
-            response = services.delete()
-            if response is not None:
-                string_util.error['error_message'] = response
-                response_message = Util.dict_to_json(string_util.error)
-                connection.sendall(Util.dict_to_bytes(response_message))
-            else:
-                connection.sendall(Util.dict_to_bytes(string_util.ok))
-        else:
-            string_util.error['error_message'] = string_util.missing_header_error
-            response_message = Util.dict_to_json(string_util.error)
-            connection.sendall(Util.dict_to_bytes(response_message))
-    return True
+@app.route('/api/v1/buyer/items', methods=['GET'])
+def enlist():
+    items_list = services.get()
+    return Util.get_response_object(items_list, 200)
 
 
-if __name__ == '__main__':
-    host = '127.0.0.1'
-    port = 65346
-    run_server.start_server(host, port, handle_connection)  # starting server
+@app.route('/api/v1/buyer/items/search', methods=['POST'])
+def search():
+    items_list = services.search(request.get_json(force=True))
+    return Util.get_response_object(items_list, 200)
+
+
+@app.route('/api/v1/buyer/items', methods=['POST'])
+def add():
+    payload = request.get_json(force=True)
+    response = services.post(data=payload)
+    if response is not None:
+        string_util.error['error_message'] = response
+        return Util.get_response_object(string_util.error, 401)
+    else:
+        return Util.get_response_object(response=None, status_code=200)
+
+
+@app.route('/api/v1/buyer/items', methods=['PUT', 'UPDATE'])
+def update():
+    payload = request.get_json(force=True)
+    response = services.put_or_update(data=payload)
+    if response is not None:
+        string_util.error['error_message'] = response
+        return Util.get_response_object(string_util.error, 401)
+    else:
+        return Util.get_response_object(response=None, status_code=200)
+
+
+@app.route('/api/v1/buyer/items', methods=['DELETE'])
+def delete():
+    response = services.delete()
+    if response is not None:
+        string_util.error['error_message'] = response
+        return Util.get_response_object(string_util.error, 401)
+    else:
+        return Util.get_response_object(response=None, status_code=200)
+
+
+@app.route('/api/v1/buyer/account/create', methods=['POST'])
+def create_account():
+    return None
+
+
+@app.route('/api/v1/buyer/account/login', methods=['POST'])
+def login():
+    return None
+
+
+@app.route('/api/v1/buyer/account/logout', methods=['GET'])
+def logout():
+    return None
+
+
+app.run(host, port)

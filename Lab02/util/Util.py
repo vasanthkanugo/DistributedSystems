@@ -1,4 +1,7 @@
 import json
+import jsonpickle
+from flask import Response
+
 
 def dict_to_bytes(map):
     return bytes(json.dumps(map), encoding='utf8')
@@ -12,8 +15,10 @@ def bytes_to_json(payload):
         print("E: invalid json " + str(payload))
     return json_dump
 
+
 def dict_to_json(object):
     return json.dumps(object)
+
 
 def json_to_dic(payload):
     json_dump = None
@@ -22,3 +27,10 @@ def json_to_dic(payload):
     except:
         print("E: invalid json " + str(payload))
     return json_dump
+
+
+def get_response_object(response, status_code):
+    response_pickled = None
+    if response is not None:
+        response_pickled = jsonpickle.encode(response)
+    return Response(response=response_pickled, status=status_code, mimetype="application/json")
