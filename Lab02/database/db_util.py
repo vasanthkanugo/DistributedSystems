@@ -41,3 +41,5 @@ def write_db(db_name, entries):
         print('E: error writing to db')
         return 'E: error writing to db'
     return None
+
+
