@@ -20,6 +20,7 @@ def read_db(db_name):
 
 
 def write_db(db_name, entries):
+    
     db_entries = dict(read_db(db_name=db_name))
     if db_entries is None:
         db_entries = dict()
