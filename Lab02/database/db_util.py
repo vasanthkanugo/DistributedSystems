@@ -1,10 +1,13 @@
 import pickle
 import os
+from util import Util
+
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 cart_db = os.path.join(__location__, 'cart.db')
 item_db = os.path.join(__location__, 'item.db')
+
 
 def read_db(db_name):
     try:
@@ -20,7 +23,6 @@ def read_db(db_name):
 
 
 def write_db(db_name, entries):
-    
     db_entries = dict(read_db(db_name=db_name))
     if db_entries is None:
         db_entries = dict()
@@ -42,5 +44,3 @@ def write_db(db_name, entries):
         print('E: error writing to db')
         return 'E: error writing to db'
     return None
-
-

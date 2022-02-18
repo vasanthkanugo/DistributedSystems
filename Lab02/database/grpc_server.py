@@ -1,8 +1,6 @@
 import grpc
 from concurrent import futures
 import time
-import io
-import base64
 import route_guide_pb2
 import route_guide_pb2_grpc
 
@@ -12,34 +10,12 @@ class read_dbServicer(route_guide_pb2_grpc.read_dbServicer):
         response = route_guide_pb2.read_db_msg()
         return response
 
-class vectorProductServicer(route_guide_pb2_grpc.vectorProductServicer):
-    def vecproduct(self, request, context):
-        response = route_guide_pb2_grpc.vectorMsgResp()
-        sum = 0
-        length = len(request.a)
-        for i in range(length):
-            sum += request.a[i] * request.b[i]
-
-        response.result = sum
-        print(sum)
-        return response
-
-
-
 # create a gRPC server
 server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
-lab6_pb2_grpc.add_addServicer_to_server(
-    addServicer(), server)
+route_guide_pb2_grpc.add_read_dbServicer_to_server(
+    read_dbServicer(), server)
 
-lab6_pb2_grpc.add_rawimageServicer_to_server(
-    imageServicer(), server)
-
-lab6_pb2_grpc.add_vectorProductServicer_to_server(
-    vectorProductServicer(), server)
-
-lab6_pb2_grpc.add_jsonImageServicer_to_server(
-    jsonImageServicer(), server)
 
 print('Starting server. Listening on port 50051.')
 server.add_insecure_port('[::]:50051')
