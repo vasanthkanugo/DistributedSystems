@@ -4,7 +4,7 @@ from flask import Response
 
 
 def dict_to_bytes(map):
-    return bytes(json.dumps(map), encoding='utf8')
+    return bytes(json.dumps(map), encoding='utf-8')
 
 
 def bytes_to_json(payload):

@@ -1,43 +1,12 @@
-import socket
-import time
-
-import client_side_buyer
-import client_side_seller
+from suds.client import Client
 from util import Util
-
-
-HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 65345      # The port used by the server
-
-for operation in client_side_seller.operations:
-    start_time = time.time()
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
-        print('Operation: '+str(operation['Header']))
-        print('Operation: '+str(operation))
-
-        s.sendall(Util.dict_to_bytes(operation))
-        data = s.recv(1024)
-        print('Received', repr(data))
-        print('----------------------------------------------')
-        s.close()
-    print('Time Taken: ' + str(time.time() - start_time))
-    print('----------------------------------------------')
-
-PORT = 65346        # The port used by the server
-
-
-for operation in client_side_buyer.operations:
-    start_time = time.time()
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
-        print('Operation: '+str(operation['Header']))
-        print('Operation: '+str(operation))
-
-        s.sendall(Util.dict_to_bytes(operation))
-        data = s.recv(1024)
-        print('Received', repr(data))
-        print('----------------------------------------------')
-        s.close()
-    print('Time Taken: ' + str(time.time() - start_time))
-    print('----------------------------------------------')
+client = Client('http://localhost:8000/?wsdl', cache=None)
+json = {
+    'client_id': 123,
+    'credit_card': {
+        'name': 'Vasanth Kanugo',
+        'number': '10987654321',
+        'expiration_date': '12-2023'
+    }
+}
+print(client.service.buy(Util.dict_to_json(json)))
