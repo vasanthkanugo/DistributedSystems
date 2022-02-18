@@ -1,33 +1,20 @@
 import grpc
 from concurrent import futures
 import time
-from PIL import Image
 import io
 import base64
-import lab6_pb2
-import lab6_pb2_grpc
+import route_guide_pb2
+import route_guide_pb2_grpc
 
 
-class addServicer(lab6_pb2_grpc.addServicer):
-    def add(self, request, context):
-        response = lab6_pb2.addMsg()
-        response.a = request.a + request.b
+class read_dbServicer(route_guide_pb2_grpc.read_dbServicer):
+    def read_db(self, request, context):
+        response = route_guide_pb2.read_db_msg()
         return response
 
-
-class imageServicer(lab6_pb2_grpc.rawimageServicer):
-    def rawimage(self, request, context):
-        response = lab6_pb2.addMsg()
-        ioBuffer = io.BytesIO(request.img)
-        i = Image.open(ioBuffer)
-        response.a = i.size[0]
-        response.b = i.size[1]
-        return response
-
-
-class vectorProductServicer(lab6_pb2_grpc.vectorProductServicer):
+class vectorProductServicer(route_guide_pb2_grpc.vectorProductServicer):
     def vecproduct(self, request, context):
-        response = lab6_pb2.vectorMsgResp()
+        response = route_guide_pb2_grpc.vectorMsgResp()
         sum = 0
         length = len(request.a)
         for i in range(length):
@@ -37,17 +24,6 @@ class vectorProductServicer(lab6_pb2_grpc.vectorProductServicer):
         print(sum)
         return response
 
-
-class jsonImageServicer(lab6_pb2_grpc.jsonImageServicer):
-    def jsonimage(self, request, context):
-        image_data = base64.b64decode(request.image)
-        response = lab6_pb2.addMsg()
-        ioBuffer = io.BytesIO(image_data)
-        i = Image.open(ioBuffer)
-        response.a = i.size[0]
-        response.b = i.size[1]
-
-        return response
 
 
 # create a gRPC server
