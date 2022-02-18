@@ -12,7 +12,8 @@ Format of the body
         'name' : 'name on credit card',
         'number': 'number on the credit card',
         'expiration_date' :'expiration_date with expected format '%M-%Y''
-    }
+    }, 
+    'price': price
 }
 '''
 
@@ -31,6 +32,10 @@ class HelloWorldService(ServiceBase):
         elif 'name' not in json_body['credit_card'] or 'number' not in json_body['credit_card'] or 'expiration_date' not in json_body['credit_card']:
             string_util.error['error_message'] = string_util.missing_request_parameters.format(
                 request_parameters='credit card details are missing')
+            return Util.dict_to_bytes(string_util.error)
+        elif 'price' not in json_body:
+            string_util.error['error_message'] = string_util.missing_request_parameters.format(
+                request_parameters='Invalid price for transaction')
             return Util.dict_to_bytes(string_util.error)
         else:
             date = None
