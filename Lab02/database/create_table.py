@@ -63,11 +63,15 @@ def create_tables(db_file):
                 cursor.execute(table)
             except Error as e:
                 print(f"Error creating table:{table} - E:{e.__str__()}")
+                return f"Error creating table:{table} - E:{e.__str__()}"
     except Error as e:
         print(e)
+        return e
     finally:
         if conn:
+            conn.commit()
             conn.close()
+    return None
 
 
 if __name__ == '__main__':

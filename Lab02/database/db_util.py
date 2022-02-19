@@ -1,6 +1,5 @@
 import pickle
 import os
-from util import Util
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))

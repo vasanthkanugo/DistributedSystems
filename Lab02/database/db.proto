@@ -1,0 +1,14 @@
+syntax ="proto3";
+
+service execute_db {
+    rpc execute_db(execute_db_msg) returns(response_msg){}
+}
+
+
+message execute_db_msg {
+   string query = 1;
+}
+
+message response_msg {
+  string response = 1;
+}
