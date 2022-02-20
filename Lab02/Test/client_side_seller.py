@@ -1,7 +1,5 @@
-post_request = {
-    'Header': 'POST',
-    'Body': [
-        {
+post_request ={
+    'items':[{
             'item_name': 'Books',
             'item_id': '6675578',
             'quantity': '23',
@@ -28,8 +26,7 @@ post_request = {
             'keywords': ['Fruit', 'Red', 'Juice', 'Pie'],
             'condition': 'new',
             'sale_price': 10
-        }
-    ]
+        }]
 }
 
 get_request = {

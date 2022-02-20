@@ -17,13 +17,13 @@ def bytes_to_json(payload):
 
 
 def dict_to_json(object):
-    return json.dumps(object)
+    return jsonpickle.dumps(object)
 
 
 def json_to_dic(payload):
     json_dump = None
     try:
-        json_dump = json.loads(bytes.decode(payload))
+        json_dump = jsonpickle.loads(payload)
     except:
         print("E: invalid json " + str(payload))
     return json_dump

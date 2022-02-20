@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from sqlite3 import Error
 
@@ -75,4 +76,8 @@ def create_tables(db_file):
 
 
 if __name__ == '__main__':
-    create_tables(r"/Users/gkanugo/Desktop/UCB/DS/DistributedSystems/Lab02/database/database.db")
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+    database = os.path.join(__location__, 'database.db')
+    create_tables(database)

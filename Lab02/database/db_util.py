@@ -1,45 +1,65 @@
-import pickle
 import os
+import sqlite3
+from sqlite3 import Error
+from util import Util
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
-
-cart_db = os.path.join(__location__, 'cart.db')
-item_db = os.path.join(__location__, 'item.db')
+db = os.path.join(__location__, 'database.db')
 
 
-def read_db(db_name):
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+'''
+returns: 
+case_1: Error statement - if error encountered
+case_2: {
+    'items':[
+        {'col_1':val_1},
+        {'col_2':val_2}
+    ]
+}
+should return a json object. 
+if error:
+{
+    'Error' : error_reponse
+}
+'''
+
+def read_db(query, db_name=db):
+    conn = None
+    response = None
     try:
-        db_file = open(db_name, 'rb')
-        print(db_file.name)
-        db_entries = pickle.load(db_file)
-        if db_file is not None:
-            db_file.close()
-    except:
-        print("E: error loading from db")
-        return "E: error loading from db"
-    return db_entries
+        conn = sqlite3.connect(db)
+        conn.row_factory = dict_factory
+        cursor = conn.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        response = dict()
+        response['items'] = rows
+    except Error as e:
+        return f"Error while reading data base: {e}"
+    finally:
+        if conn:
+            conn.close()
+    return Util.dict_to_json(response)
 
 
-def write_db(db_name, entries):
-    db_entries = dict(read_db(db_name=db_name))
-    if db_entries is None:
-        db_entries = dict()
-    if len(entries) != 0:
-        db_entries.update(entries)
-    else:
-        db_entries = dict()
-    del_key = None
-    for key, value in db_entries.items():
-        if value is None:
-            del_key = key
-    if not del_key is None:
-        del db_entries[del_key]
+def write_db(query, db_name=db):
+    conn = None
     try:
-        db_file = open(db_name, 'wb')
-        pickle.dump(db_entries, db_file)
-        db_file.close()
-    except:
-        print('E: error writing to db')
-        return 'E: error writing to db'
+        conn = sqlite3.connect(db)
+        conn.row_factory = dict_factory
+        cursor = conn.cursor()
+        cursor.execute(query)
+        conn.commit()
+    except Error as e:
+        return f"Error while reading data base: {e}"
+    finally:
+        if conn:
+            conn.close()
     return None
