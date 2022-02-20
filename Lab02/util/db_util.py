@@ -1,12 +1,7 @@
 import grpc
 import os
-import sqlite3
-from sqlite3 import Error
 from util import Util
 from database import db_pb2, db_pb2_grpc
-import struct
-import sys
-from time import perf_counter
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))

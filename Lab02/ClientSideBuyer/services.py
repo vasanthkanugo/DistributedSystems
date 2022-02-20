@@ -105,25 +105,54 @@ def make_purchase(data, db_name=None):
 
 '''
 Input Structure: {
-    'client_id': client_id, 
+    'buyer_id': client_id, 
     'feedbacks' :[
         { 
             'item_id': item_id, 
-            'rating': 0 or 1(thumbs up or down), 
-            'feedback': 'any or none'
+            'thumbs_up': true
         }, 
         { 
             'item_id': item_id, 
-            'rating': 0 or 1(thumbs up or down), 
-            'feedback': 'any or none'
+            'thumbs_up': false
         }
-    ]
+    ],
+    'sold': true
 }
 '''
 
 # Submit feedback for a set of items
 def submit_feedback(data, db_name=None):
+    if 'buyer_id' or 'feedbacks' or 'sold' not in data:
+        return string_util.missing_request_parameters.format(request_parameters='client_id or feedbacks or sold')
+    feedbacks = data['feedbacks']
+    if len(feedbacks) == 0:
+        return string_util.missing_request_parameters.format(request_parameters='feedback for items')
+    for feedback in feedbacks:
+        up_vote, down_vote = False, False
+        item_id = feedback['item_id']
+        query = None
+        if data['sold']:
+            if feedback['thumbs_up']:
+                up_vote = True
+                query = buyer_db_util.update_up_votes.format(item_id=item_id)
+            else:
+                down_vote = False
+                query = buyer_db_util.update_up_votes.format(item_id=item_id)
+            error = db_util.write_db(query)
+            if error:
+                print(f"Error updating the feedback to the seller : {error}")
+                return f"Error updating the feedback to the seller : {error}"
+        query = buyer_db_util.add_history.format(buyer_id=data['buyer_id'],
+                                                 item_id=item_id,
+                                                 up_vote=up_vote,
+                                                 down_vote=down_vote,
+                                                 sold=data['sold'])
+        error = db_util.write_db(query)
+        if error:
+            print(f"Error updating the feedback to the seller : {error}")
+            return f"Error updating the feedback to the seller : {error}"
     return None
+
 
 
 # Get Seller rating - for the given buyer_id

@@ -81,7 +81,7 @@ def login():
 
 @app.route('/api/v1/buyer/account/logout', methods=['GET'])
 def logout():
-    return None
+    return Util.get_response_object(response=None, status_code=200)
 
 
 @app.route('/api/v1/buyer/purchase', methods=['POST'])
