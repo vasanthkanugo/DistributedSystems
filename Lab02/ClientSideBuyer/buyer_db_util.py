@@ -14,7 +14,7 @@ display_cart = "SELECT * FROM cart where buyer_id={buyer_id}"
 search_seller_ids = "SELECT DISTINCT(sellers.seller_id) FROM history JOIN items ON history.item_id=items.item_id " \
                "JOIN sellers ON items.seller_id=sellers.seller_id " \
                "WHERE history.sold=1 and history.buyer_id={buyer_id}"
-get_seller_ratings = "SELECT name, up_votes, down_votes, item_sold WHERE seller_id IN ({seller_ids})"
+get_seller_ratings = "SELECT name, up_votes, down_votes, item_sold FROM seller WHERE seller_id IN ({seller_ids})"
 
 # Get Buyer History
 get_buyer_history = "SELECT * FROM history where buyer_id={buyer_id}"
