@@ -10,7 +10,7 @@ def enlist():
     items_list = services.get()
     return Util.get_response_object(items_list, 200)
 
-@app.route('/api/v1/seller/items', methods=['POST'])
+@app.route('/api/v1/seller/items/add', methods=['POST'])
 def add():
     payload = request.get_json(force=True)
     response = services.post(data=payload)
@@ -20,7 +20,7 @@ def add():
     else:
         return Util.get_response_object(response=None, status_code=200)
 
-@app.route('/api/v1/seller/items', methods=['PUT', 'UPDATE'])
+@app.route('/api/v1/seller/items/update', methods=['PUT', 'UPDATE'])
 def update():
     payload = request.get_json(force=True)
     response = services.put_or_update(data=payload)
@@ -31,7 +31,7 @@ def update():
         return Util.get_response_object(response=None, status_code=200)
 
 
-@app.route('/api/v1/seller/items', methods=['DELETE'])
+@app.route('/api/v1/seller/items/delete', methods=['DELETE'])
 def delete():
     response = services.delete()
     if response is not None:

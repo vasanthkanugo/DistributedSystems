@@ -1,5 +1,4 @@
-from database import db_util
-from util import string_util
+from util import string_util, db_util
 
 
 # Get list of all items in the database

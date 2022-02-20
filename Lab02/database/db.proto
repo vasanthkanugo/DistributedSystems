@@ -1,11 +1,18 @@
 syntax ="proto3";
 
-service execute_db {
-    rpc execute_db(execute_db_msg) returns(response_msg){}
+service read_db {
+    rpc read_db(read_db_msg) returns(response_msg){}
 }
 
+service write_db {
+    rpc write_db(write_db_msg) returns(response_msg){}
+}
 
-message execute_db_msg {
+message read_db_msg {
+   string query = 1;
+}
+
+message write_db_msg {
    string query = 1;
 }
 

@@ -5,7 +5,7 @@ import grpc
 import db_pb2 as db__pb2
 
 
-class execute_dbStub(object):
+class read_dbStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -14,42 +14,42 @@ class execute_dbStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.execute_db = channel.unary_unary(
-                '/execute_db/execute_db',
-                request_serializer=db__pb2.execute_db_msg.SerializeToString,
+        self.read_db = channel.unary_unary(
+                '/read_db/read_db',
+                request_serializer=db__pb2.read_db_msg.SerializeToString,
                 response_deserializer=db__pb2.response_msg.FromString,
                 )
 
 
-class execute_dbServicer(object):
+class read_dbServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def execute_db(self, request, context):
+    def read_db(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_execute_dbServicer_to_server(servicer, server):
+def add_read_dbServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'execute_db': grpc.unary_unary_rpc_method_handler(
-                    servicer.execute_db,
-                    request_deserializer=db__pb2.execute_db_msg.FromString,
+            'read_db': grpc.unary_unary_rpc_method_handler(
+                    servicer.read_db,
+                    request_deserializer=db__pb2.read_db_msg.FromString,
                     response_serializer=db__pb2.response_msg.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'execute_db', rpc_method_handlers)
+            'read_db', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class execute_db(object):
+class read_db(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def execute_db(request,
+    def read_db(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,8 +59,69 @@ class execute_db(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/execute_db/execute_db',
-            db__pb2.execute_db_msg.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/read_db/read_db',
+            db__pb2.read_db_msg.SerializeToString,
+            db__pb2.response_msg.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class write_dbStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.write_db = channel.unary_unary(
+                '/write_db/write_db',
+                request_serializer=db__pb2.write_db_msg.SerializeToString,
+                response_deserializer=db__pb2.response_msg.FromString,
+                )
+
+
+class write_dbServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def write_db(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_write_dbServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'write_db': grpc.unary_unary_rpc_method_handler(
+                    servicer.write_db,
+                    request_deserializer=db__pb2.write_db_msg.FromString,
+                    response_serializer=db__pb2.response_msg.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'write_db', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class write_db(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def write_db(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/write_db/write_db',
+            db__pb2.write_db_msg.SerializeToString,
             db__pb2.response_msg.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

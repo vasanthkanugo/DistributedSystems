@@ -6,37 +6,55 @@ from sqlite3 import Error
 import sqlite3
 import os
 import create_table
+from util import Util
 
 db_file = None
 
-class execute_dbServicer(db_pb2_grpc.execute_dbServicer):
-    def execute_db(self, request, context):
-        response = db_pb2.response_msg()
-        query = request.query
-        connection_response = None
-        # Code to execute the query
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+
+class read_dbServicer(db_pb2_grpc.read_dbServicer):
+    def read_db(self, request, context):
         conn = None
+        query = request.query
+        response = None
         try:
-            conn = sqlite3.connect(db_file)
-            print(sqlite3.version)
+            conn = sqlite3.connect(db)
+            conn.row_factory = dict_factory
             cursor = conn.cursor()
             cursor.execute(query)
-            cursor.fetchall()
-            rows = {
-                'items':[]
-            }
-            # if cursor:
-            #     for db_r:
-            #         rows['items'] +=
-
+            rows = cursor.fetchall()
+            response = dict()
+            response['items'] = rows
         except Error as e:
-            print(f"Error executing query :{e}")
-            connection_response = f"Error executing query :{e}"
+            return f"Error while reading data base: {e}"
         finally:
             if conn:
                 conn.close()
-        return response
+        return Util.dict_to_json(response)
+
+
+class write_dbServicer(db_pb2_grpc.write_dbServicer):
+    def write_db(self, request, context):
+        conn = None
+        query = request.query
+        try:
+            conn = sqlite3.connect(db)
+            conn.row_factory = dict_factory
+            cursor = conn.cursor()
+            cursor.execute(query)
+            conn.commit()
+        except Error as e:
+            return f"Error while reading data base: {e}"
+        finally:
+            if conn:
+                conn.close()
+        return None
 
 
 if __name__ == '__main__':
@@ -46,12 +64,13 @@ if __name__ == '__main__':
 
     print("Creating Databases")
     error = create_table.create_tables(db)
-    if not error:
-        print("Error: "+error)
+    if error:
+        print("Error: " + error)
         exit()
     # create a gRPC server
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    db_pb2_grpc.add_execute_dbServicer_to_server(execute_dbServicer(), server)
+    db_pb2_grpc.add_read_dbServicer_to_server(read_dbServicer(), server)
+    db_pb2_grpc.add_write_dbServicer_to_server(write_dbServicer(), server)
     print('Starting server. Listening on port 50051.')
     server.add_insecure_port('[::]:50051')
     server.start()

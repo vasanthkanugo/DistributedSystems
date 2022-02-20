@@ -1,5 +1,4 @@
-from database import db_util
-from util import string_util, Util
+from util import string_util, Util, db_util
 from datetime import datetime as dt
 from suds.client import Client
 import buyer_db_util
@@ -151,7 +150,7 @@ def create_buyer_account(data, db_name=None):
     query = buyer_db_util.create_account.format(name=data['name'],
                                                 user_name=data['user_name'],
                                                 passwowrd=data['password'])
-    error = db_util.write_db(query,db_name=db_name)
+    error = db_util.write_db(query, db_name=db_name)
     if error:
         return "Error creating buyer"
     return None
