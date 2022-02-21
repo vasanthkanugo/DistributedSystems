@@ -49,7 +49,7 @@ def clear_cart():
     if not buyer_id:
         string_util.error['error_message'] = string_util.missing_request_parameters.format(request_parameters='buyer id')
         return Util.get_response_object(string_util.error, 401)
-    response = services.delete()
+    response = services.clear_cart(buyer_id)
     if response is not None:
         string_util.error['error_message'] = response
         return Util.get_response_object(string_util.error, 401)
@@ -104,6 +104,26 @@ def feedback():
         return Util.get_response_object(string_util.error, 401)
     else:
         return Util.get_response_object(response=None, status_code=200)
+
+
+@app.route('/api/v1/buyer/history', methods=['GET'])
+def get_buyer_history():
+    buyer_id = request.args.get('buyer_id')
+    if not buyer_id:
+        string_util.error['error_message'] = string_util.missing_request_parameters.format(request_parameters='buyer id')
+        return Util.get_response_object(string_util.error, 401)
+    items_list = services.get_buyer_history(buyer_id=buyer_id)
+    return Util.get_response_object(items_list, 200)
+
+
+@app.route('/api/v1/seller/ratings', methods=['GET'])
+def get_seller_rating():
+    buyer_id = request.args.get('buyer_id')
+    if not buyer_id:
+        string_util.error['error_message'] = string_util.missing_request_parameters.format(request_parameters='buyer id')
+        return Util.get_response_object(string_util.error, 401)
+    items_list = services.get_seller_rating(buyer_id=buyer_id)
+    return Util.get_response_object(items_list, 200)
 
 
 app.run(host, port)
