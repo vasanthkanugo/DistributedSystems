@@ -11,5 +11,5 @@ update_sale_price_of_item ="UPDATE items SET sale_price={sale_price} WHERE item_
 display_items = "SELECT * FROM items where seller_id={seller_id} "
 
 # Get Seller Rating
-get_seller_ratings = "SELECT name, up_votes, down_votes, item_sold FROM sellers WHERE seller_id={seller_id} "
+get_seller_ratings = "SELECT name, up_votes, down_votes, items_sold FROM sellers WHERE seller_id={seller_id} "
 

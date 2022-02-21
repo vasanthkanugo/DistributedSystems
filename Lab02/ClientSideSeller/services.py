@@ -1,6 +1,5 @@
 import jsonpickle
-
-from util import string_util, Util, db_util
+from util import string_util, db_util
 import seller_db_util
 
 # Get list of all items in the database
@@ -63,19 +62,9 @@ def remove_item(data, db_name=None):
         return string_util.error_add_item_cart
     return None
 
-# Update sale price for an item
-def update_sale_price(data, db_name=None):
-    if not ('item_id' or 'sale_price' or 'seller_id' in data):
-        return string_util.missing_request_parameters.format(request_parameters='item_id or quantity or seller_id')
-    query = seller_db_util.update_sale_price_of_item.format(item_id=data['item_id'], sale_price=data['sale_price'], seller_id=data['seller_id'])
-    error = db_util.write_db(query, db_name=db_name)
-    if error:
-        return string_util.error_add_item_cart
-    return None
-
 # Get Seller rating - for the given seller
 def get_seller_rating(seller_id, db_name=None):
-    query = seller_db_util.get_seller_ratings.format(seller_ids=seller_id)
+    query = seller_db_util.get_seller_ratings.format(seller_id=seller_id)
     seller_ratings = db_util.read_db(query, db_name=db_name)
     return seller_ratings
 

@@ -14,6 +14,15 @@ def enlist():
     items_list = services.get_items(seller_id=seller_id)
     return Util.get_response_object(items_list, 200)
 
+@app.route('/api/v1/seller/items/ratings', methods=['GET'])
+def enlist_seller_ratings():
+    seller_id = request.args.get('seller_id')
+    if not seller_id:
+        string_util.error['error_message'] = string_util.missing_request_parameters.format(request_parameters='seller_id')
+        return Util.get_response_object(string_util.error, 401)
+    items_list = services.get_seller_rating(seller_id=seller_id)
+    return Util.get_response_object(items_list, 200)
+
 @app.route('/api/v1/seller/items', methods=['POST'])
 def add():
     payload = request.get_json(force=True)
