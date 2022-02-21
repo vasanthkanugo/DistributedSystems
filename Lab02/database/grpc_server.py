@@ -22,27 +22,30 @@ class read_dbServicer(db_pb2_grpc.read_dbServicer):
     def read_db(self, request, context):
         conn = None
         query = request.query
-        response = None
+        response = db_pb2.response_msg(response=None)
         try:
             conn = sqlite3.connect(db)
             conn.row_factory = dict_factory
             cursor = conn.cursor()
             cursor.execute(query)
             rows = cursor.fetchall()
-            response = dict()
-            response['items'] = rows
+            lis = dict()
+            lis['items'] = rows
+            response = db_pb2.response_msg(response=Util.dict_to_json(lis))
         except Error as e:
-            return f"Error while reading data base: {e}"
+            response = db_pb2.response_msg(response=f"Error while reading data base: {e}")
+            return response
         finally:
             if conn:
                 conn.close()
-        return Util.dict_to_json(response)
+        return response
 
 
 class write_dbServicer(db_pb2_grpc.write_dbServicer):
     def write_db(self, request, context):
         conn = None
         query = request.query
+        response = db_pb2.response_msg(response=None)
         try:
             conn = sqlite3.connect(db)
             conn.row_factory = dict_factory
@@ -50,11 +53,12 @@ class write_dbServicer(db_pb2_grpc.write_dbServicer):
             cursor.execute(query)
             conn.commit()
         except Error as e:
-            return f"Error while reading data base: {e}"
+            response = db_pb2.response_msg(response=f"Error while writing data base: {e}")
+            return response
         finally:
             if conn:
                 conn.close()
-        return None
+        return response
 
 
 if __name__ == '__main__':

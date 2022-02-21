@@ -32,5 +32,5 @@ def json_to_dic(payload):
 def get_response_object(response, status_code):
     response_pickled = None
     if response is not None:
-        response_pickled = jsonpickle.encode(response)
+        response_pickled = jsonpickle.dumps(response)
     return Response(response=response_pickled, status=status_code, mimetype="application/json")

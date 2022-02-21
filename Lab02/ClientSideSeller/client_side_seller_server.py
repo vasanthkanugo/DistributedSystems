@@ -2,38 +2,46 @@ from util import Util, string_util
 import services
 from flask import Flask, request
 
-host, port, app = '127.0.0.1', 655346, Flask(__name__)
+host, port, app = '127.0.0.1', 9001, Flask(__name__)
 
 
 @app.route('/api/v1/seller/items', methods=['GET'])
 def enlist():
-    items_list = services.get()
+    seller_id = request.args.get('seller_id')
+    if not seller_id:
+        string_util.error['error_message'] = string_util.missing_request_parameters.format(request_parameters='seller_id')
+        return Util.get_response_object(string_util.error, 401)
+    items_list = services.get_items(seller_id=seller_id)
     return Util.get_response_object(items_list, 200)
 
-@app.route('/api/v1/seller/items/add', methods=['POST'])
+@app.route('/api/v1/seller/items', methods=['POST'])
 def add():
     payload = request.get_json(force=True)
-    response = services.post(data=payload)
+    response = services.add_item_for_sale(data=payload)
     if response is not None:
         string_util.error['error_message'] = response
         return Util.get_response_object(string_util.error, 401)
     else:
         return Util.get_response_object(response=None, status_code=200)
 
-@app.route('/api/v1/seller/items/update', methods=['PUT', 'UPDATE'])
+@app.route('/api/v1/seller/items', methods=['PUT', 'UPDATE'])
 def update():
     payload = request.get_json(force=True)
-    response = services.put_or_update(data=payload)
+    response = services.remove_item(data=payload)
     if response is not None:
         string_util.error['error_message'] = response
         return Util.get_response_object(string_util.error, 401)
     else:
         return Util.get_response_object(response=None, status_code=200)
 
-
-@app.route('/api/v1/seller/items/delete', methods=['DELETE'])
+@app.route('/api/v1/seller/items', methods=['DELETE'])
 def delete():
-    response = services.delete()
+    item_id = request.args.get('item_id')
+    seller_id = request.args.get('seller_id')
+    if not (item_id or seller_id):
+        string_util.error['error_message'] = string_util.missing_request_parameters.format(request_parameters='item_id or seller_id')
+        return Util.get_response_object(string_util.error, 401)
+    response = services.delete_item(item_id, seller_id, db_name=None)
     if response is not None:
         string_util.error['error_message'] = response
         return Util.get_response_object(string_util.error, 401)

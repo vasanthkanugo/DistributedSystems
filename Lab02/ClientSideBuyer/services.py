@@ -178,7 +178,7 @@ def create_buyer_account(data, db_name=None):
         return string_util.missing_request_parameters.format(request_parameters='user_name or password or name')
     query = buyer_db_util.create_account.format(name=data['name'],
                                                 user_name=data['user_name'],
-                                                passwowrd=data['password'])
+                                                password=data['password'])
     error = db_util.write_db(query, db_name=db_name)
     if error:
         return "Error creating buyer"
@@ -189,7 +189,7 @@ def login_buyer_account(data, db_name=None):
     if not ('user_name' or 'password' in data):
         return string_util.missing_request_parameters.format(request_parameters='user_name or password or name')
     query = buyer_db_util.login_account.format(user_name=data['user_name'],
-                                                passwowrd=data['password'])
+                                                password=data['password'])
     login_details = db_util.read_db(query, db_name=db_name)
     if 'Error' in login_details:
         return login_details

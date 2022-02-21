@@ -29,13 +29,11 @@ if error:
     'Error' : error_reponse
 }
 '''
-
-addr = "545"
-
-
-channel = grpc.insecure_channel(addr)
+host = "127.0.0.1"
+addr = f"{host}:50051"
 
 def read_db(query, db_name=db):
+    channel = grpc.insecure_channel(addr)
     stub = db_pb2_grpc.read_dbStub(channel)
     message = db_pb2.read_db_msg(query=query)
     response = stub.read_db(message)
@@ -45,7 +43,8 @@ def read_db(query, db_name=db):
 
 
 def write_db(query, db_name=db):
-    stub = db_pb2_grpc.write_db(channel)
+    channel = grpc.insecure_channel(addr)
+    stub = db_pb2_grpc.write_dbStub(channel)
     message = db_pb2.write_db_msg(query=query)
     response = stub.write_db(message)
     response = response.response
