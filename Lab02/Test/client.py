@@ -94,11 +94,11 @@ buyer_id = response.json()['buyer_id']
 print(f"buyer_id: {buyer_id} ")
 
 
-# response = requests.post("http://127.0.0.1:65534/api/v1/buyer/items/search", json={
-#     'item_category': 'Book',
-#     'keywords':['Books', 'Novel']
-# })
-# print("ITEM SEARCH STATUS",response.status_code, response.json())
+response = requests.post("http://127.0.0.1:65534/api/v1/buyer/items/search", json={
+    'item_category': 'Book',
+    'keywords':['Books', 'Novel']
+})
+print("ITEM SEARCH STATUS",response.status_code, response.json())
 
 # response = requests.get("http://127.0.0.1:65534/api/v1/buyer/cart?buyer_id=2")
 # print("GET STATUS",response.status_code, response.json())
@@ -168,9 +168,9 @@ print(f"buyer_id: {buyer_id} ")
 #
 # response = requests.get("http://127.0.0.1:65534/api/v1/buyer/history?buyer_id=2")
 # print("GET BUYER HISTORY ITEMS",response.status_code, response.json())
-
+#
 # response = requests.get("http://127.0.0.1:65534/api/v1/seller/ratings?buyer_id=2")
 # print("GET SELLER RATINGS ITEMS",response.status_code, response.json())
-
+#
 
 #Look into feedback and search functionalities

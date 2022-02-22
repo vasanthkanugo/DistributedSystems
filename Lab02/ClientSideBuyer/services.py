@@ -8,10 +8,20 @@ import buyer_db_util
 def search(data, db_name=None):
     if 'item_category' not in data or 'keywords' not in data:
         return string_util.missing_request_parameters.format(request_parameters='item_category or keywords')
-    query = buyer_db_util.search_items.format(category=data['item_category'],
-                                              keywords=','.join([f'\'{word}\'' for word in data['keywords']]))
+    query = buyer_db_util.search_items.format(category=data['item_category'])
     response = db_util.read_db(query, db_name=db_name)
-    return response
+    item_ids = set()
+    if response is not None:
+        if 'items' in response:
+            for item in response['items']:
+                for keyword in item['keywords']:
+                    item_ids.add(item['item_id'])
+    if len(item_ids)!=0:
+        query = buyer_db_util.get_details_of_item.\
+            format(item_ids=','.join([ str(item_id) for item_id in item_ids]))
+        response = db_util.read_db(query, db_name=db_name)
+        return response
+    return None
 
 
 # Get all the elements in the cart
