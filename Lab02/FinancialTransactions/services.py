@@ -3,6 +3,7 @@ from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from util import Util, string_util
 from datetime import datetime as dt
+import random
 
 '''
 Format of the body
@@ -49,7 +50,7 @@ class HelloWorldService(ServiceBase):
                 string_util.error['error_message'] = string_util.missing_request_parameters.format(
                     request_parameters='Credit Card Expired')
                 return Util.dict_to_bytes(string_util.error)
-        return Util.dict_to_bytes(string_util.ok)
+        return  Util.dict_to_bytes(string_util.ok) if random.randrange(1,10,1)%3==0  else Util.dict_to_bytes(string_util.error)
 
 
 application = Application([HelloWorldService], 'spyne.examples.hello.soap',
