@@ -9,7 +9,7 @@ def search(data, db_name=None):
     if 'item_category' not in data or 'keywords' not in data:
         return string_util.missing_request_parameters.format(request_parameters='item_category or keywords')
     query = buyer_db_util.search_items.format(category=data['item_category'],
-                                              keywords=','.join(data['keywords']))
+                                              keywords=','.join([f'\'{word}\'' for word in data['keywords']]))
     response = db_util.read_db(query, db_name=db_name)
     return response
 
@@ -31,10 +31,10 @@ def add_item_to_cart(data, db_name=None):
     for item in items:
         query = buyer_db_util.add_items_to_cart.format(item_id=item['item_id'],
                                                        buyer_id=data['buyer_id'],
-                                                       quantity=data['quantity'])
+                                                       quantity=item['quantity'])
         error = db_util.write_db(query, db_name=db_name)
         if error:
-            print("Error writing to db: "+error)
+            print("Error writing to db: " + error)
     if error:
         return string_util.error_add_item_cart
     return None
@@ -47,7 +47,8 @@ def remove_item_from_cart(data, db_name=None):
     if data['quantity'] == 0:
         query = buyer_db_util.delete_item_from_cart.format(buyer_id=data['buyer_id'], item_id=data['item_id'])
     else:
-        query = buyer_db_util.remove_item_from_cart.format(buyer_id=data['buyer_id'], item_id=data['item_id'], quantity=data['quantity'])
+        query = buyer_db_util.remove_item_from_cart.format(buyer_id=data['buyer_id'], item_id=data['item_id'],
+                                                           quantity=data['quantity'])
     error = db_util.write_db(query, db_name=db_name)
     if error:
         return string_util.error_add_item_cart
@@ -120,9 +121,10 @@ Input Structure: {
 }
 '''
 
+
 # Submit feedback for a set of items
 def submit_feedback(data, db_name=None):
-    if 'buyer_id' or 'feedbacks' or 'sold' not in data:
+    if 'buyer_id' not in data or 'feedbacks' not in data or 'sold' not in data:
         return string_util.missing_request_parameters.format(request_parameters='client_id or feedbacks or sold')
     feedbacks = data['feedbacks']
     if len(feedbacks) == 0:
@@ -154,16 +156,16 @@ def submit_feedback(data, db_name=None):
     return None
 
 
-
 # Get Seller rating - for the given buyer_id
 def get_seller_rating(buyer_id, db_name=None):
     query = buyer_db_util.search_seller_ids.format(buyer_id=buyer_id)
     seller_ids = db_util.read_db(query, db_name=db_name)
     if not seller_ids:
         return None
-    query = buyer_db_util.get_seller_ratings.format(seller_ids=','.join(seller_ids))
+    query = buyer_db_util.get_seller_ratings.format(seller_ids=','.join([f"{seller_id['seller_id']}" for seller_id in seller_ids['items']]))
     seller_ratings = db_util.read_db(query, db_name=db_name)
     return seller_ratings
+
 
 # Get Buyer History
 def get_buyer_history(buyer_id, db_name=None):
@@ -184,16 +186,15 @@ def create_buyer_account(data, db_name=None):
         return "Error creating buyer"
     return None
 
+
 # Login to Buyer Account
 def login_buyer_account(data, db_name=None):
     if not ('user_name' or 'password' in data):
         return string_util.missing_request_parameters.format(request_parameters='user_name or password or name')
     query = buyer_db_util.login_account.format(user_name=data['user_name'],
-                                                password=data['password'])
+                                               password=data['password'])
     login_details = db_util.read_db(query, db_name=db_name)
     if 'Error' in login_details:
         return login_details
     login_details = login_details['items'][0]
     return login_details
-
-
