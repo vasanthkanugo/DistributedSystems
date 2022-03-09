@@ -70,7 +70,7 @@ class WorkThread(threading.Thread):
 
 if __name__ == '__main__':
     listenIp = "0.0.0.0"
-    listenPort = 123
+    listenPort = 8888
     socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     socket.bind((listenIp, listenPort))
     print("local socket: ", socket.getsockname())

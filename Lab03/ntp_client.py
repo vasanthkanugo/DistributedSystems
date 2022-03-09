@@ -1,8 +1,10 @@
+import json
 import socket
 import time
 from ntp_packet import NTPPacket
 from ntp import NTP, NTPException
 from time import ctime
+import datetime
 
 class NTPStats(NTPPacket):
     """NTP statistics.
@@ -16,12 +18,12 @@ class NTPStats(NTPPacket):
         super(NTPStats, self).__init__()
         self.dest_timestamp = 0
         """destination timestamp"""
-
+        self.ntp = NTP()
     @property
     def offset(self):
         """offset"""
         return ((self.recv_timestamp - self.orig_timestamp) +
-                (self.tx_timestamp - self.dest_timestamp))/2
+                (self.tx_timestamp - self.dest_timestamp)) / 2
 
     @property
     def delay(self):
@@ -54,6 +56,24 @@ class NTPStats(NTPPacket):
         """Destination timestamp in system time."""
         return NTP.ntp_to_system_time(self.dest_timestamp)
 
+    @property
+    def to_json(self):
+        return json.dumps({
+            'leap': self.leap,
+            'version': self.version,
+            'mode': self.mode,
+            'stratum': self.stratum,
+            'poll': self.poll,
+            'precision': self.precision,
+            'root_delay': self.root_delay,
+            'root_dispersion': self.root_dispersion,
+            'ref_id': self.ref_id,
+            'ref_timestamp': datetime.datetime.fromtimestamp(self.ref_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'orig_timestamp': datetime.datetime.fromtimestamp(self.orig_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'recv_timestamp': datetime.datetime.fromtimestamp(self.recv_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'tx_timestamp': datetime.datetime.fromtimestamp(self.tx_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f")
+        })
+
 
 class NTPClient(object):
     """NTP client session."""
@@ -79,7 +99,7 @@ class NTPClient(object):
             addrinfo = socket.getaddrinfo(host, port)[0]
             family, sockaddr = addrinfo[0], addrinfo[4]
         else:
-            family, sockaddr = socket.AF_INET, ('localhost',123)
+            family, sockaddr = socket.AF_INET, ('localhost', 123)
 
         # create the socket
         s = socket.socket(family, socket.SOCK_DGRAM)
@@ -98,9 +118,7 @@ class NTPClient(object):
             s.sendto(query_packet.to_data(), sockaddr)
 
             # wait for the response - check the source address
-            src_addr = None,
-            while src_addr[0] != sockaddr[0]:
-                response_packet, src_addr = s.recvfrom(256)
+            response_packet, src_addr = s.recvfrom(256)
 
             # build the destination timestamp
             dest_timestamp = NTP.system_to_ntp_time(time.time())
@@ -114,14 +132,19 @@ class NTPClient(object):
         stats.from_data(response_packet)
         stats.dest_timestamp = dest_timestamp
 
-        return stats
+        return query_packet, stats
+
 
 if __name__ == '__main__':
     c = NTPClient()
-    response = c.request('127.0.0.1', version=3)
+    remote_server = 'europe.pool.ntp.org'
+    #query_packet, response = c.request(remote_server, version=3)
+    query_packet,response = c.request('127.0.0.1', port=8888, version=3)
+    print(query_packet.to_json())
+    print(response.to_json)
     print(response.offset)
     print(response.version)
-    ctime(response.tx_time)
+    print(datetime.datetime.fromtimestamp(response.tx_time).strftime("%m/%d/%Y, %H:%M:%S.%f"))
     NTP.leap_to_text(response.leap)
-    print(response.root_delay)
+    print(response.delay)
     NTP.ref_id_to_text(response.ref_id)

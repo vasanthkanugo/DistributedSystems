@@ -1,5 +1,7 @@
+import json
 import struct
 from ntp import NTP, NTPException
+import datetime
 
 class NTPPacket(object):
     """NTP packet class.
@@ -40,9 +42,13 @@ class NTPPacket(object):
         """reference timestamp"""
         self.orig_timestamp = 0
         """originate timestamp"""
+        self.orig_timestamp_high = 0
+        self.orig_timestamp_low = 0
         self.recv_timestamp = 0
         """receive timestamp"""
         self.tx_timestamp = tx_timestamp
+        self.tx_timestamp_high = 0
+        self.tx_timestamp_low = 0
         """tansmit timestamp"""
         self.ntp = NTP()
 
@@ -68,8 +74,8 @@ class NTPPacket(object):
                 self.ref_id,
                 self.ntp._to_int(self.ref_timestamp),
                 self.ntp._to_frac(self.ref_timestamp),
-                self.ntp._to_int(self.orig_timestamp),
-                self.ntp._to_frac(self.orig_timestamp),
+                self.orig_timestamp_high,
+                self.orig_timestamp_low,
                 self.ntp._to_int(self.recv_timestamp),
                 self.ntp._to_frac(self.recv_timestamp),
                 self.ntp._to_int(self.tx_timestamp),
@@ -107,6 +113,8 @@ class NTPPacket(object):
         self.ref_id = unpacked[6]
         self.ref_timestamp = self.ntp._to_time(unpacked[7], unpacked[8])
         self.orig_timestamp = self.ntp._to_time(unpacked[9], unpacked[10])
+        self.orig_timestamp_high = unpacked[9]
+        self.orig_timestamp_low = unpacked[10]
         self.recv_timestamp = self.ntp._to_time(unpacked[11], unpacked[12])
         self.tx_timestamp = self.ntp._to_time(unpacked[13], unpacked[14])
         self.tx_timestamp_high = unpacked[13]
@@ -118,3 +126,20 @@ class NTPPacket(object):
     def SetOriginTimeStamp(self,high,low):
         self.orig_timestamp_high = high
         self.orig_timestamp_low = low
+
+    def to_json(self):
+        return json.dumps({
+            'leap': self.leap,
+            'version': self.version,
+            'mode': self.mode,
+            'stratum': self.stratum,
+            'poll': self.poll,
+            'precision': self.precision,
+            'root_delay': self.root_delay,
+            'root_dispersion': self.root_dispersion,
+            'ref_id': self.ref_id,
+            'ref_timestamp': datetime.datetime.fromtimestamp(self.ref_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'orig_timestamp': datetime.datetime.fromtimestamp(self.orig_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'recv_timestamp': datetime.datetime.fromtimestamp(self.recv_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'tx_timestamp': datetime.datetime.fromtimestamp(self.tx_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f")
+        })
