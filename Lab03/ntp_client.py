@@ -1,10 +1,12 @@
 import json
+import os
 import socket
 import time
 from ntp_packet import NTPPacket
 from ntp import NTP, NTPException
 from time import ctime
 import datetime
+
 
 class NTPStats(NTPPacket):
     """NTP statistics.
@@ -19,6 +21,7 @@ class NTPStats(NTPPacket):
         self.dest_timestamp = 0
         """destination timestamp"""
         self.ntp = NTP()
+
     @property
     def offset(self):
         """offset"""
@@ -118,12 +121,14 @@ class NTPClient(object):
             s.sendto(query_packet.to_data(), sockaddr)
 
             # wait for the response - check the source address
-            response_packet, src_addr = s.recvfrom(256)
-
+            src_addr = None,
+            while src_addr[0] != sockaddr[0]:
+                response_packet, src_addr = s.recvfrom(256)
             # build the destination timestamp
             dest_timestamp = NTP.system_to_ntp_time(time.time())
         except socket.timeout:
-            raise NTPException("No response received from %s." % host)
+            print("No response received from %s." % host)
+            return None, None
         finally:
             s.close()
 
@@ -138,13 +143,51 @@ class NTPClient(object):
 if __name__ == '__main__':
     c = NTPClient()
     remote_server = 'europe.pool.ntp.org'
-    #query_packet, response = c.request(remote_server, version=3)
-    query_packet,response = c.request('127.0.0.1', port=8888, version=3)
-    print(query_packet.to_json())
-    print(response.to_json)
-    print(response.offset)
-    print(response.version)
-    print(datetime.datetime.fromtimestamp(response.tx_time).strftime("%m/%d/%Y, %H:%M:%S.%f"))
-    NTP.leap_to_text(response.leap)
-    print(response.delay)
-    NTP.ref_id_to_text(response.ref_id)
+    input, output = [], []
+    total_delay, total_offset = [], []
+    burst_counter, time_counter, retransmit_counter = 0, 0, 14
+    while (True):
+        while (True):
+            delay, offset = [], []
+            # query_packet, response = c.request('127.0.0.1', port=8888, version=3)
+            query_packet, response = c.request(remote_server, version=3)
+            if not response:
+                print("packet retransmitting..")
+                retransmit_counter += 1
+                if retransmit_counter == 10:
+                    break
+                continue
+            input.append(query_packet.to_json())
+            output.append(response.to_json)
+
+            delay.append(response.delay)
+            offset.append(response.offset)
+
+            print("Burst packet - transmit")
+            burst_counter += 1
+            if burst_counter == 8:
+                burst_counter = 0
+                break
+        if len(output) == 0:
+            print("The server is out of service. all the message retransmitted failed. ")
+            break
+        print(input)
+        print(output)
+
+        q = list()
+        print("Sleeping for 4 mins....")
+        time.sleep(4 * 60)
+        time_counter += 1
+        input, output = [],[]
+        if time_counter == 15:
+            break
+
+print(delay, offset)
+    # print(query_packet.to_json())
+    # print(response.to_json)
+    # print(response.offset)
+    # print(response.version)
+    # print(datetime.datetime.fromtimestamp(response.tx_time).strftime("%m/%d/%Y, %H:%M:%S.%f"))
+    # NTP.leap_to_text(response.leap)
+    # print(response.delay)
+    # NTP.ref_id_to_text(response.ref_id)
