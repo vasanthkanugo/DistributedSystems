@@ -124,7 +124,7 @@ class NTP:
         Returns:
         corresponding system time
         """
-        return timestamp
+        return timestamp - NTP.NTP_DELTA
 
     def system_to_ntp_time(timestamp):
         """Convert a system time to a NTP time.
@@ -135,7 +135,7 @@ class NTP:
         Returns:
         corresponding NTP time
         """
-        return timestamp
+        return timestamp + NTP.NTP_DELTA
 
     def leap_to_text(leap):
         """Convert a leap indicator to text.

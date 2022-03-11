@@ -138,8 +138,8 @@ class NTPPacket(object):
             'root_delay': self.root_delay,
             'root_dispersion': self.root_dispersion,
             'ref_id': self.ref_id,
-            'ref_timestamp': datetime.datetime.fromtimestamp(self.ref_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
-            'orig_timestamp': datetime.datetime.fromtimestamp(self.orig_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
-            'recv_timestamp': datetime.datetime.fromtimestamp(self.recv_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
-            'tx_timestamp': datetime.datetime.fromtimestamp(self.tx_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f")
+            'ref_timestamp': datetime.datetime.fromtimestamp( NTP.ntp_to_system_time(self.ref_timestamp)).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'orig_timestamp': datetime.datetime.fromtimestamp(NTP.ntp_to_system_time(self.orig_timestamp)).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'recv_timestamp': datetime.datetime.fromtimestamp(NTP.ntp_to_system_time(self.recv_timestamp)).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'tx_timestamp': datetime.datetime.fromtimestamp(NTP.ntp_to_system_time(self.tx_timestamp)).strftime("%m/%d/%Y, %H:%M:%S.%f")
         })

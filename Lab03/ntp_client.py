@@ -3,8 +3,7 @@ import os
 import socket
 import time
 from ntp_packet import NTPPacket
-from ntp import NTP, NTPException
-from time import ctime
+from ntp import NTP
 import datetime
 
 
@@ -71,10 +70,10 @@ class NTPStats(NTPPacket):
             'root_delay': self.root_delay,
             'root_dispersion': self.root_dispersion,
             'ref_id': self.ref_id,
-            'ref_timestamp': datetime.datetime.fromtimestamp(self.ref_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
-            'orig_timestamp': datetime.datetime.fromtimestamp(self.orig_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
-            'recv_timestamp': datetime.datetime.fromtimestamp(self.recv_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f"),
-            'tx_timestamp': datetime.datetime.fromtimestamp(self.tx_timestamp).strftime("%m/%d/%Y, %H:%M:%S.%f")
+            'ref_timestamp': datetime.datetime.fromtimestamp(NTP.ntp_to_system_time(self.ref_timestamp)).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'orig_timestamp': datetime.datetime.fromtimestamp(NTP.ntp_to_system_time(self.orig_timestamp)).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'recv_timestamp': datetime.datetime.fromtimestamp(NTP.ntp_to_system_time(self.recv_timestamp)).strftime("%m/%d/%Y, %H:%M:%S.%f"),
+            'tx_timestamp': datetime.datetime.fromtimestamp(NTP.ntp_to_system_time(self.tx_timestamp)).strftime("%m/%d/%Y, %H:%M:%S.%f")
         })
 
 
@@ -145,12 +144,12 @@ if __name__ == '__main__':
     remote_server = 'europe.pool.ntp.org'
     input, output = [], []
     total_delay, total_offset = [], []
-    burst_counter, time_counter, retransmit_counter = 0, 0, 14
+    delay_o, offset_o = [],[]
+    burst_counter, time_counter, retransmit_counter = 0, 15, 0
     while (True):
         while (True):
-            delay, offset = [], []
-            # query_packet, response = c.request('127.0.0.1', port=8888, version=3)
-            query_packet, response = c.request(remote_server, version=3)
+            query_packet, response = c.request('127.0.0.1', port=8888, version=3)
+            #query_packet, response = c.request(remote_server, version=3)
             if not response:
                 print("packet retransmitting..")
                 retransmit_counter += 1
@@ -160,8 +159,8 @@ if __name__ == '__main__':
             input.append(query_packet.to_json())
             output.append(response.to_json)
 
-            delay.append(response.delay)
-            offset.append(response.offset)
+            total_delay.append(response.delay)
+            total_offset.append(response.offset)
 
             print("Burst packet - transmit")
             burst_counter += 1
@@ -174,15 +173,28 @@ if __name__ == '__main__':
         print(input)
         print(output)
 
-        q = list()
+        offset_o.append(min(total_offset[::-1][0:4]))
+        delay_o.append(min(total_delay[::-1][0:4]))
         print("Sleeping for 4 mins....")
+        if time_counter >= 15:
+            break
         time.sleep(4 * 60)
         time_counter += 1
         input, output = [],[]
-        if time_counter == 15:
-            break
 
-print(delay, offset)
+
+print(total_delay, total_offset)
+print(delay_o, offset_o)
+logs = open('logs.txt', 'w')
+logs.write("TOTAL DELAY \n")
+logs.write(str(total_delay))
+logs.write("\n TOTAL OFFSET \n")
+logs.write(str(total_offset))
+logs.write("\n DELAY0 \n")
+logs.write(str(delay_o))
+logs.write("\n OFFSET0 \n")
+logs.write(str(offset_o))
+logs.close()
     # print(query_packet.to_json())
     # print(response.to_json)
     # print(response.offset)
