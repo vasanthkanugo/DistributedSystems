@@ -1,5 +1,4 @@
 import json
-import os
 import socket
 import time
 from ntp_packet import NTPPacket
@@ -145,11 +144,11 @@ if __name__ == '__main__':
     input, output = [], []
     total_delay, total_offset = [], []
     delay_o, offset_o = [],[]
-    burst_counter, time_counter, retransmit_counter = 0, 15, 0
+    burst_counter, time_counter, retransmit_counter = 0, 0, 0
     while (True):
         while (True):
-            query_packet, response = c.request('127.0.0.1', port=8888, version=3)
-            #query_packet, response = c.request(remote_server, version=3)
+            #query_packet, response = c.request('127.0.0.1', port=8888, version=3)
+            query_packet, response = c.request(remote_server, version=3)
             if not response:
                 print("packet retransmitting..")
                 retransmit_counter += 1
@@ -185,7 +184,7 @@ if __name__ == '__main__':
 
 print(total_delay, total_offset)
 print(delay_o, offset_o)
-logs = open('logs.txt', 'w')
+logs = open('logs_server_public.txt', 'w')
 logs.write("TOTAL DELAY \n")
 logs.write(str(total_delay))
 logs.write("\n TOTAL OFFSET \n")
