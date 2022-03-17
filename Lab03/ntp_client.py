@@ -147,8 +147,8 @@ if __name__ == '__main__':
     burst_counter, time_counter, retransmit_counter = 0, 0, 0
     while (True):
         while (True):
-            #query_packet, response = c.request('127.0.0.1', port=8888, version=3)
-            query_packet, response = c.request(remote_server, version=3)
+            query_packet, response = c.request('34.105.68.202', port=8888, version=3)
+            #query_packet, response = c.request(remote_server, version=3)
             if not response:
                 print("packet retransmitting..")
                 retransmit_counter += 1
