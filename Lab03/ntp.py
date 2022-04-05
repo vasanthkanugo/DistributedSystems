@@ -74,115 +74,39 @@ class NTP:
     """leap indicator table"""
 
     def system_to_ntp_time(self, timestamp):
-        """Convert a system time to a NTP time.
-        Parameters:
-        timestamp -- timestamp in system time
-        Returns:
-        corresponding NTP time
-        """
         return timestamp + NTP.NTP_DELTA
 
 
     def _to_int(self, timestamp):
-        """Return the integral part of a timestamp.
-        Parameters:
-        timestamp -- NTP timestamp
-        Retuns:
-        integral part
-        """
         return int(timestamp)
 
 
     def _to_frac(self, timestamp, n=32):
-        """Return the fractional part of a timestamp.
-        Parameters:
-        timestamp -- NTP timestamp
-        n         -- number of bits of the fractional part
-        Retuns:
-        fractional part
-        """
         return int(abs(timestamp - self._to_int(timestamp)) * 2 ** n)
 
 
     def _to_time(self, integ, frac, n=32):
-        """Return a timestamp from an integral and fractional part.
-        Parameters:
-        integ -- integral part
-        frac  -- fractional part
-        n     -- number of bits of the fractional part
-        Retuns:
-        timestamp
-        """
         return integ + float(frac) / 2 ** n
 
     def ntp_to_system_time(timestamp):
-        """Convert a NTP time to system time.
-
-        Parameters:
-        timestamp -- timestamp in NTP time
-
-        Returns:
-        corresponding system time
-        """
         return timestamp - NTP.NTP_DELTA
 
     def system_to_ntp_time(timestamp):
-        """Convert a system time to a NTP time.
-
-        Parameters:
-        timestamp -- timestamp in system time
-
-        Returns:
-        corresponding NTP time
-        """
         return timestamp + NTP.NTP_DELTA
 
     def leap_to_text(leap):
-        """Convert a leap indicator to text.
-
-        Parameters:
-        leap -- leap indicator value
-
-        Returns:
-        corresponding message
-
-        Raises:
-        NTPException -- in case of invalid leap indicator
-        """
         if leap in NTP.LEAP_TABLE:
             return NTP.LEAP_TABLE[leap]
         else:
             raise NTPException("Invalid leap indicator.")
 
     def mode_to_text(mode):
-        """Convert a NTP mode value to text.
-
-        Parameters:
-        mode -- NTP mode
-
-        Returns:
-        corresponding message
-
-        Raises:
-        NTPException -- in case of invalid mode
-        """
         if mode in NTP.MODE_TABLE:
             return NTP.MODE_TABLE[mode]
         else:
             raise NTPException("Invalid mode.")
 
     def stratum_to_text(stratum):
-        """Convert a stratum value to text.
-
-        Parameters:
-        stratum -- NTP stratum
-
-        Returns:
-        corresponding message
-
-        Raises:
-        NTPException -- in case of invalid stratum
-        """
         if stratum in NTP.STRATUM_TABLE:
             return NTP.STRATUM_TABLE[stratum] % stratum
         elif 1 < stratum < 16:
@@ -193,18 +117,6 @@ class NTP:
             raise NTPException("Invalid stratum or reserved.")
 
     def ref_id_to_text(ref_id, stratum=2):
-        """Convert a reference clock identifier to text according to its stratum.
-
-        Parameters:
-        ref_id  -- reference clock indentifier
-        stratum -- NTP stratum
-
-        Returns:
-        corresponding message
-
-        Raises:
-        NTPException -- in case of invalid stratum
-        """
         fields = (ref_id >> 24 & 0xff, ref_id >> 16 & 0xff,
                   ref_id >> 8 & 0xff, ref_id & 0xff)
 

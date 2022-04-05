@@ -4,11 +4,6 @@ from ntp import NTP, NTPException
 import datetime
 
 class NTPPacket(object):
-    """NTP packet class.
-
-    This represents an NTP packet.
-    """
-
     _PACKET_FORMAT = "!B B B b 11I"
     """packet format to pack/unpack"""
 
@@ -21,35 +16,22 @@ class NTPPacket(object):
         tx_timestamp -- packet transmit timestamp
         """
         self.leap = 0
-        """leap second indicator"""
         self.version = version
-        """version"""
         self.mode = mode
-        """mode"""
         self.stratum = 0
-        """stratum"""
         self.poll = 0
-        """poll interval"""
         self.precision = 0
-        """precision"""
         self.root_delay = 0
-        """root delay"""
         self.root_dispersion = 0
-        """root dispersion"""
         self.ref_id = 0
-        """reference clock identifier"""
         self.ref_timestamp = 0
-        """reference timestamp"""
         self.orig_timestamp = 0
-        """originate timestamp"""
         self.orig_timestamp_high = 0
         self.orig_timestamp_low = 0
         self.recv_timestamp = 0
-        """receive timestamp"""
         self.tx_timestamp = tx_timestamp
         self.tx_timestamp_high = 0
         self.tx_timestamp_low = 0
-        """tansmit timestamp"""
         self.ntp = NTP()
 
     def to_data(self):

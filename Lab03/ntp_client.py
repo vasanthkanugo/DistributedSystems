@@ -86,12 +86,6 @@ class NTPClient(object):
     def request(self, host, version=2, port="ntp", timeout=5):
         """Query a NTP server.
 
-        Parameters:
-        host    -- server name/address
-        version -- NTP version to use
-        port    -- server port
-        timeout -- timeout on socket operations
-
         Returns:
         NTPStats object
         """
