@@ -46,6 +46,8 @@ class write_dbServicer(db_pb2_grpc.write_dbServicer):
         conn = None
         query = request.query
         response = db_pb2.response_msg(response=None)
+        # consensus -> raft or the own protocol
+        # get the object and pass the query to the conn
         try:
             conn = sqlite3.connect(db)
             conn.row_factory = dict_factory
